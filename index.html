@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <style type="text/css">
+    form {
+        font: 14pt sans-serif;
+    }
+    
+    input {
+        font: 14pt sans-serif;
+        min-height: 20px;
+        border-radius: 4px;
+        -webkit-border-radius: 4px;
+        padding: 5px 15px;
+    }
+    
+    input[type=text] {
+        width: 40px;
+        padding: 5px;
+        border: 2px solid #ccc;
+    }
+    
+    #result {
+        min-width: 300px;
+    }
+    
+    input[type=text]:focus {
+        border-color: #333;
+    }
+    
+    input[type=radio] {
+        margin: 8px 8px 8px 8px;
+    }
+    
+    input[type=submit] {
+        font: 16pt sans-serif;
+        min-width: 314px;
+        background: #ddd;
+        border: 0 none;
+        cursor: pointer;
+    }
+    
+    input[type=button] {
+        margin: 0px 0px 0px 10px;
+        font: 16pt sans-serif;
+        min-width: 100px;
+        background: #ddd;
+        border: 0 none;
+        cursor: pointer;
+    }
+    </style>
+</head>
+
+<body>
+    <form>
+        <p>Длина строки: </p>
+        <input type="text" value="10" name="l" id="len">
+        <p>Набор символов: </p>
+        <input type="radio" name="set" value="0" id="s0">Number
+        <br>
+        <input type="radio" name="set" value="1" id="s1">Hex
+        <br>
+        <input type="radio" name="set" value="2" id="s2">Number + lower case
+        <br>
+        <input type="radio" name="set" value="3" id="s3" checked>Number + CaMeL CaSe
+        <br>
+        <br>
+        <input type="submit" value="Generate">
+        <br>
+        <br>
+        <input type="text" name="result" id="result">
+        <input type="button" value="Copy" id="copy">
+    </form>
+</body>
+<script type="text/javascript">
+var dicts = [
+    "0123456789",
+    "0123456789ABCDEF",
+    "0123456789abcdefghijklmnopqrstuvwxyz",
+    "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+]
+var args = {};
+location.search.substr(1).split("&").forEach((item) => {
+    var [k, v] = item.split("=");
+    v = v && decodeURIComponent(v);
+    args[k] = v;
+});
+var l = parseInt(args.l)
+var set = dicts[parseInt(args.set)]
+var result;
+
+if (typeof args.set == "string") {
+    document.getElementById("s" + args.set).checked = true;
+}
+
+if (typeof args.l == "string") {
+    document.getElementById("len").value = l;
+}
+
+if (l && set) {
+    result = gen(l, set);
+} else {
+    result = "";
+}
+
+if (result) {
+    var el = document.getElementById("result");
+    el.value = result;
+    document.getElementById("copy").onclick = function(e) {
+        el.focus()
+        el.select();
+        document.execCommand('copy');
+        el.blur();
+    }
+}
+
+function gen(l, set) {
+    var s = "";
+    for (var i = 0; i < l; ++i) {
+        s += set.charAt(parseInt(Math.random() * set.length));
+    }
+    return s;
+}
+</script>
+
+</html>
